@@ -47,8 +47,8 @@ class ContactDetailPage extends StatelessWidget {
             onPressed: () {
 
               final updatedContact = Contact(
-                _editNameController.text,
-                _editPhoneController.text,
+               name: _editNameController.text,
+               phoneNumber:  _editPhoneController.text,
               );
               onEdit(updatedContact);
               Navigator.pop(contextEdit); // 다이얼로그 닫기
