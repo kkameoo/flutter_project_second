@@ -40,8 +40,8 @@ class _AddNumberFormState extends State<AddNumberForm> {
                 if (_nameController.text.isNotEmpty &&
                     _phoneController.text.isNotEmpty) {
                   final newContact = Contact(
-                    _nameController.text,
-                    _phoneController.text,
+                    name: _nameController.text,
+                    phoneNumber: _phoneController.text,
                   );
                   widget.onAdd(newContact); // 리스트에 추가
                   Navigator.pop(context);  // 돌아가기

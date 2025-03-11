@@ -18,7 +18,7 @@ class ContactDetailPage extends StatelessWidget {
 
   void _showEditDialog(BuildContext context) {
     _editNameController.text = contact.name;
-    _editPhoneController.text = contact.phone;
+    _editPhoneController.text = contact.phoneNumber;
 
     showDialog(
       context: context,
@@ -47,8 +47,8 @@ class ContactDetailPage extends StatelessWidget {
             child: Text("수정"),
             onPressed: () {
               onEdit(Contact(
-                _editNameController.text,
-                _editPhoneController.text,
+                name: _editNameController.text,
+                phoneNumber: _editPhoneController.text,
               ));
               Navigator.pop(context);
               Navigator.pop(context); // 상세 페이지도 닫기
@@ -108,7 +108,7 @@ class ContactDetailPage extends StatelessWidget {
           children: [
             Text("이름: ${contact.name}", style: TextStyle(fontSize: 20)),
             SizedBox(height: 10),
-            Text("전화번호: ${contact.phone}", style: TextStyle(fontSize: 18)),
+            Text("전화번호: ${contact.phoneNumber}", style: TextStyle(fontSize: 18)),
           ],
         ),
       ),

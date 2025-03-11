@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       ),
 
       initialRoute: "/",
-      routes: {"/": (context) => HomeForm(), "/list": (context) => ListForm(),
+      routes: {"/": (context) => HomeForm(), "/list": (context) => ContactListPage(),
 
       },
     );
