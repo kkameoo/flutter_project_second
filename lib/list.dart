@@ -18,6 +18,9 @@ import 'package:dio/dio.dart'; // 추가
 //   }
 // }
 
+// API 엔드포인트 설정
+const String apiEndpoint = "http://localhost:8099/api/user";
+
 class Contact {
 
   final String name;
@@ -31,56 +34,52 @@ class Contact {
   }
 
 }
-
+// 연락처 목록을 보여주는 페이지
 class ContactListPage extends StatefulWidget {
   @override
   _ContactListPageState createState() => _ContactListPageState();
 }
 
 class _ContactListPageState extends State<ContactListPage> {
-  List<Contact> contacts = [];
+  List<Contact> contacts = []; //  연락처 리스트
 
   @override
   void initState() {
     super.initState();
-    fetchContacts(); // 앱 실행 시 API에서 데이터 불러오기
+    loadContacts(); //  앱 실행 시 API에서 연락처 목록 불러오기
   }
 
-  Future<void> fetchContacts() async {
+  //  API에서 연락처 목록을 가져오는 함수
+  Future<List<Contact>> getContactList() async {
     try {
-      var response = await Dio().get("http://localhost:8099/api/user");
+      var dio = Dio(); //  Dio 인스턴스 생성 (HTTP 요청을 위해 사용)
+      dio.options.headers['Content-Type'] = "application/json"; //  JSON 형식으로 데이터 주고받기 설정
 
-      // JSON 리스트 데이터를 Contact 리스트로 변환
-      List<Contact> loadedContacts = (response.data as List)
-          .map((data) => Contact.fromJson(data))
-          .toList();
+      final response = await dio.get(apiEndpoint); //  서버에 GET 요청 보내기
 
-      setState(() {
-        contacts = loadedContacts; // 가져온 데이터로 리스트 업데이트
-      });
+      if (response.statusCode == 200) {
+        print(response.data); //  API 응답 데이터 출력 (디버깅용)
+
+        //  JSON 데이터를 Contact 리스트로 변환
+        List<Contact> loadedContacts = (response.data as List)
+            .map((data) => Contact.fromJson(data))
+            .toList();
+
+        return loadedContacts; //  연락처 리스트 반환
+      } else {
+        throw Exception("API 서버 오류");
+      }
     } catch (e) {
-      print("데이터 불러오기 실패: $e");
+      print("연락처 데이터를 불러오는데 실패했습니다: $e");
+      return []; //  오류 발생 시 빈 리스트 반환
     }
   }
 
-  void _addContact(Contact contact) {
+  //  API에서 연락처 목록을 불러와 화면에 적용하는 함수
+  Future<void> loadContacts() async {
+    List<Contact> fetchedContacts = await getContactList(); //  API에서 연락처 데이터 가져오기
     setState(() {
-      contacts.add(contact);
-    });
-  }
-
-  void _editContact(Contact oldContact, Contact newContact) {
-    setState(() {
-      int index = contacts.indexOf(oldContact);
-      if (index != -1) {
-        contacts[index] = newContact;
-      }
-    });
-  }
-
-  void _deleteContact(Contact contact) {
-    setState(() {
-      contacts.remove(contact);
+      contacts = fetchedContacts; //  가져온 데이터로 리스트 업데이트
     });
   }
 
@@ -92,41 +91,29 @@ class _ContactListPageState extends State<ContactListPage> {
         backgroundColor: Colors.orangeAccent,
       ),
       body: contacts.isEmpty
-          ? Center(child: CircularProgressIndicator()) // 데이터 로딩 중
+          ? Center(child: CircularProgressIndicator()) //  데이터 로딩 중 표시
           : ListView.builder(
         itemCount: contacts.length,
         itemBuilder: (context, index) {
-          final contact = contacts[index];
           return ListTile(
             title: Text(
-              contact.name,
+              contacts[index].name, //  연락처 이름 표시
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
-
-              contacts[index].phoneNumber,
-
+              contacts[index].phoneNumber, //  연락처 전화번호 표시
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             onTap: () {
+              //  연락처 클릭 시 상세 정보 페이지로 이동
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => ContactDetailPage(
-
-                    // contact: contact,
-                    // onEdit: (updatedContact) {
-                    //   _editContact(contact, updatedContact);
-                    // },
-                    // onDelete: (contactToDelete) {
-                    //   _deleteContact(contactToDelete);
-                    // },
-
                     contact: contacts[index],
                     onEdit: (newContact) =>
                         _editContact(contacts[index], newContact),
                     onDelete: _deleteContact,
-
                   ),
                 ),
               );
@@ -136,6 +123,7 @@ class _ContactListPageState extends State<ContactListPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          //  연락처 추가 페이지로 이동
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -143,9 +131,31 @@ class _ContactListPageState extends State<ContactListPage> {
             ),
           );
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.add), //  연락처 추가 버튼
         backgroundColor: Colors.orangeAccent,
       ),
     );
+  }
+
+  //  연락처 추가 함수
+  void _addContact(Contact contact) {
+    setState(() {
+      contacts.add(contact);
+    });
+  }
+
+  //  연락처 수정 함수
+  void _editContact(Contact oldContact, Contact newContact) {
+    setState(() {
+      int index = contacts.indexOf(oldContact);
+      if (index != -1) contacts[index] = newContact;
+    });
+  }
+
+  //  연락처 삭제 함수
+  void _deleteContact(Contact contact) {
+    setState(() {
+      contacts.remove(contact);
+    });
   }
 }
