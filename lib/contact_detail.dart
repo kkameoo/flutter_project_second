@@ -17,7 +17,7 @@ class ContactDetailPage extends StatelessWidget {
 
   void _showEditDialog(BuildContext context) {
     _editNameController.text = contact.name;
-    _editPhoneController.text = contact.phone;
+    _editPhoneController.text = contact.phoneNumber;
 
     showDialog(
       context: context,
@@ -45,6 +45,7 @@ class ContactDetailPage extends StatelessWidget {
           ElevatedButton(
             child: Text("수정"),
             onPressed: () {
+
               final updatedContact = Contact(
                 _editNameController.text,
                 _editPhoneController.text,
@@ -52,6 +53,7 @@ class ContactDetailPage extends StatelessWidget {
               onEdit(updatedContact);
               Navigator.pop(contextEdit); // 다이얼로그 닫기
               Navigator.pop(context); // 상세 페이지 닫기 -> 리스트로 이동
+
             },
           ),
         ],
@@ -108,7 +110,7 @@ class ContactDetailPage extends StatelessWidget {
           children: [
             Text("이름: ${contact.name}", style: TextStyle(fontSize: 20)),
             SizedBox(height: 10),
-            Text("전화번호: ${contact.phone}", style: TextStyle(fontSize: 18)),
+            Text("전화번호: ${contact.phoneNumber}", style: TextStyle(fontSize: 18)),
           ],
         ),
       ),
