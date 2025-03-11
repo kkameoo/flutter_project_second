@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_second/addNumber.dart';
-import 'package:flutter_project_second/contact_detail.dart'; // 추가
+import 'package:flutter_project_second/contact_detail.dart'; // 추가1
 
 class ListForm extends StatelessWidget {
   const ListForm({super.key});
