@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_second/addNumber.dart';
-import 'package:flutter_project_second/contact_detail.dart'; // 추가1
+import 'package:flutter_project_second/contact_detail.dart';
 
 class ListForm extends StatelessWidget {
   const ListForm({super.key});
@@ -16,8 +16,9 @@ class ListForm extends StatelessWidget {
 }
 
 class Contact {
-  final String name;
-  final String phone;
+  String name;
+  String phone;
+
   Contact(this.name, this.phone);
 }
 
@@ -44,7 +45,9 @@ class _ContactListPageState extends State<ContactListPage> {
   void _editContact(Contact oldContact, Contact newContact) {
     setState(() {
       int index = contacts.indexOf(oldContact);
-      if (index != -1) contacts[index] = newContact;
+      if (index != -1) {
+        contacts[index] = newContact;
+      }
     });
   }
 
@@ -64,13 +67,14 @@ class _ContactListPageState extends State<ContactListPage> {
       body: ListView.builder(
         itemCount: contacts.length,
         itemBuilder: (context, index) {
+          final contact = contacts[index];
           return ListTile(
             title: Text(
-              contacts[index].name,
+              contact.name,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
-              contacts[index].phone,
+              contact.phone,
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             onTap: () {
@@ -78,9 +82,13 @@ class _ContactListPageState extends State<ContactListPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ContactDetailPage(
-                    contact: contacts[index],
-                    onEdit: (newContact) => _editContact(contacts[index], newContact),
-                    onDelete: _deleteContact,
+                    contact: contact,
+                    onEdit: (updatedContact) {
+                      _editContact(contact, updatedContact);
+                    },
+                    onDelete: (contactToDelete) {
+                      _deleteContact(contactToDelete);
+                    },
                   ),
                 ),
               );

@@ -1,6 +1,5 @@
-// contact_detail.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_project_second/list.dart';
+import 'list.dart';
 
 class ContactDetailPage extends StatelessWidget {
   final Contact contact;
@@ -22,7 +21,7 @@ class ContactDetailPage extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (contextEdit) => AlertDialog(
         title: Text("연락처 수정"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -41,17 +40,18 @@ class ContactDetailPage extends StatelessWidget {
         actions: [
           TextButton(
             child: Text("취소"),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(contextEdit),
           ),
           ElevatedButton(
             child: Text("수정"),
             onPressed: () {
-              onEdit(Contact(
+              final updatedContact = Contact(
                 _editNameController.text,
                 _editPhoneController.text,
-              ));
-              Navigator.pop(context);
-              Navigator.pop(context); // 상세 페이지도 닫기
+              );
+              onEdit(updatedContact);
+              Navigator.pop(contextEdit); // 다이얼로그 닫기
+              Navigator.pop(context); // 상세 페이지 닫기 -> 리스트로 이동
             },
           ),
         ],
@@ -62,21 +62,21 @@ class ContactDetailPage extends StatelessWidget {
   void _showDeleteConfirm(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (contextDelete) => AlertDialog(
         title: Text("삭제 확인"),
         content: Text("${contact.name}을(를) 삭제하시겠습니까?"),
         actions: [
           TextButton(
             child: Text("취소"),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(contextDelete),
           ),
           ElevatedButton(
             child: Text("삭제"),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
             onPressed: () {
               onDelete(contact);
-              Navigator.pop(context);
-              Navigator.pop(context); // 상세 페이지도 닫기
+              Navigator.pop(contextDelete); // 다이얼로그 닫기
+              Navigator.pop(context); // 상세 페이지 닫기 -> 리스트로 이동
             },
           ),
         ],
