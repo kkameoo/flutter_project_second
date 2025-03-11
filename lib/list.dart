@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_second/addNumber.dart';
+import 'package:flutter_project_second/contact_detail.dart'; // 추가
 
 class ListForm extends StatelessWidget {
   const ListForm({super.key});
@@ -40,6 +41,19 @@ class _ContactListPageState extends State<ContactListPage> {
     });
   }
 
+  void _editContact(Contact oldContact, Contact newContact) {
+    setState(() {
+      int index = contacts.indexOf(oldContact);
+      if (index != -1) contacts[index] = newContact;
+    });
+  }
+
+  void _deleteContact(Contact contact) {
+    setState(() {
+      contacts.remove(contact);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +77,11 @@ class _ContactListPageState extends State<ContactListPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ContactDetailPage(contact: contacts[index]),
+                  builder: (context) => ContactDetailPage(
+                    contact: contacts[index],
+                    onEdit: (newContact) => _editContact(contacts[index], newContact),
+                    onDelete: _deleteContact,
+                  ),
                 ),
               );
             },
@@ -81,34 +99,6 @@ class _ContactListPageState extends State<ContactListPage> {
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.orangeAccent,
-      ),
-    );
-  }
-}
-
-class ContactDetailPage extends StatelessWidget {
-  final Contact contact;
-  ContactDetailPage({required this.contact});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("연락처 상세"),
-        backgroundColor: Colors.orangeAccent,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "이름: ${contact.name}",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text("전화번호: ${contact.phone}", style: TextStyle(fontSize: 18)),
-          ],
-        ),
       ),
     );
   }
