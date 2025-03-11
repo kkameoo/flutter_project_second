@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_second/home.dart';
 import 'package:flutter_project_second/list.dart';
+import 'package:flutter_project_second/addNumber.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +21,9 @@ class MyApp extends StatelessWidget {
       ),
 
       initialRoute: "/",
-      routes: {"/": (context) => HomeForm(), "/list": (context) => ListForm()},
+      routes: {"/": (context) => HomeForm(), "/list": (context) => ListForm(),
+
+      },
     );
   }
 }

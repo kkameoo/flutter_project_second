@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_second/addNumber.dart';
 
 class ListForm extends StatelessWidget {
   const ListForm({super.key});
@@ -32,6 +33,13 @@ class _ContactListPageState extends State<ContactListPage> {
     Contact("최다혜", "010-2222-3333"),
     Contact("정호진", "010-7777-8888"),
   ];
+
+  void _addContact(Contact contact) {
+    setState(() {
+      contacts.add(contact);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,8 +63,7 @@ class _ContactListPageState extends State<ContactListPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder:
-                      (context) => ContactDetailPage(contact: contacts[index]),
+                  builder: (context) => ContactDetailPage(contact: contacts[index]),
                 ),
               );
             },
@@ -65,7 +72,12 @@ class _ContactListPageState extends State<ContactListPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: 새 연락처 추가 기능
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddNumberForm(onAdd: _addContact),
+            ),
+          );
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.orangeAccent,
