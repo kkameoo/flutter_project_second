@@ -95,7 +95,7 @@ class ContactDetailPage extends StatelessWidget {
                   decoration: InputDecoration(labelText: "주소"),
                 ),
                 TextField(
-                  controller: _editPhoneController,
+                  controller: _editGroupontroller,
                   decoration: InputDecoration(labelText: "그룹"),
                 ),
               ],
