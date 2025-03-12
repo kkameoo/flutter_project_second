@@ -8,7 +8,7 @@ class HomeForm extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("홈"),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor:  Colors.orangeAccent,
       ),
       body: _HomeForm(),
     );
@@ -29,8 +29,18 @@ class _HomeFormState extends State<_HomeForm> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween, // 위쪽과 아래쪽에 공간을 자동으로 배분
         children: [
-          Expanded(child: Container()),  // 화면 상단의 여백을 만들어줍니다.
+          // 화면 상단에 이미지를 넣으려면, Container로 감싸서 크기를 설정합니다.
+          Container(
+            height: 555,  // 이미지 높이를 설정 (필요한 크기로 변경)
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/bear.jpg'),  // 이미지 경로
+                fit: BoxFit.cover,  // 이미지를 컨테이너에 맞게 꽉 채움
+              ),
+            ),
+          ),
 
+          Expanded(child: Container()),  // 화면 상단의 여백을 만들어줍니다.
           // 버튼을 화면 하단에 배치
           Row(
             mainAxisAlignment: MainAxisAlignment.center,  // 버튼을 중앙 정렬
@@ -39,7 +49,10 @@ class _HomeFormState extends State<_HomeForm> {
                 width: 200,  // 네모의 가로 크기
                 height: 200,  // 네모의 세로 크기
                 decoration: BoxDecoration(
-                  color: Colors.blue,  // 배경색 추가
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/call.jpg'),  // 다른 이미지 경로
+                    fit: BoxFit.cover,  // 이미지를 네모 상자에 맞게 꽉 채움
+                  ),
                   // image: DecorationImage(
                   //   image: AssetImage('../android/img/다운로드.jpg'),  // 이미지 경로
                   //   fit: BoxFit.cover,  // 이미지를 네모 상자에 맞게 꽉 채움
@@ -56,11 +69,11 @@ class _HomeFormState extends State<_HomeForm> {
                 width: 200,  // 네모의 가로 크기
                 height: 200,  // 네모의 세로 크기
                 decoration: BoxDecoration(
-                  color: Colors.red,  // 배경색 추가
-                  // image: DecorationImage(
-                  //   image: AssetImage('assets/your_image2.png'),  // 다른 이미지 경로
-                  //   fit: BoxFit.cover,  // 이미지를 네모 상자에 맞게 꽉 채움
-                  // ),
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/call2.jpg'),  // 다른 이미지 경로
+                    fit: BoxFit.cover,  // 이미지를 네모 상자에 맞게 꽉 채움
+                  ),
+
                 ),
                 child: GestureDetector(
                   onTap: () {
