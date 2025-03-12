@@ -24,6 +24,7 @@ class ContactDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFE9ECEF),
       appBar: AppBar(
         title: Text("연락처 상세"),
         backgroundColor: Colors.orangeAccent,
@@ -38,24 +39,67 @@ class ContactDetailPage extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
+        body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("이름: ${contact.name}", style: TextStyle(fontSize: 20)),
-            SizedBox(height: 10),
-            Text("이메일: ${contact.email}", style: TextStyle(fontSize: 18)),
-            SizedBox(height: 10),
-            Text(
-              "전화번호: ${contact.phoneNumber}",
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 10),
-            Text("주소: ${contact.address}", style: TextStyle(fontSize: 18)),
-            SizedBox(height: 10),
-            Text("그룹: ${contact.group}", style: TextStyle(fontSize: 18)),
-          ],
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+    // ✅ 이름 박스 (둥근 테두리 & 흰색 배경)
+    Container(
+    width: double.infinity,
+    padding: EdgeInsets.symmetric(vertical: 20),
+    decoration: BoxDecoration(
+    color: Colors.white, // ✅ 배경 흰색
+    borderRadius: BorderRadius.circular(15), // ✅ 둥근 테두리
+    boxShadow: [
+    BoxShadow(
+    color: Colors.grey.withOpacity(0.3), // ✅ 그림자 효과
+    blurRadius: 10,
+    spreadRadius: 2,
+    offset: Offset(0, 5),
+    ),
+    ],
+    ),
+    child: Center(
+    child: Text(
+    "${contact.name}",
+    style: TextStyle(fontSize: 50, fontWeight: FontWeight.w900),
+    textAlign: TextAlign.center,
+    ),
+    ),
+    ),
+    SizedBox(height: 40),
+
+    // ✅ 이메일, 전화번호, 주소, 그룹을 하나의 박스로 묶기
+    Container(
+    width: double.infinity,
+    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+    decoration: BoxDecoration(
+    color: Colors.white, // ✅ 배경 흰색
+    borderRadius: BorderRadius.circular(15), // ✅ 둥근 테두리
+    boxShadow: [
+    BoxShadow(
+    color: Colors.grey.withOpacity(0.3), // ✅ 그림자 효과
+    blurRadius: 10,
+    spreadRadius: 2,
+    offset: Offset(0, 5),
+    ),
+    ],
+    ),
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+    Text("이메일: ${contact.email}", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700)),
+    SizedBox(height: 20),
+    Text("전화번호: ${contact.phoneNumber}", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700)),
+    SizedBox(height: 20),
+    Text("주소: ${contact.address}", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700)),
+    SizedBox(height: 20),
+    Text("그룹: ${contact.group}", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700)),
+            ],
+           ),
+          ),
+         ],
         ),
       ),
     );
@@ -72,48 +116,48 @@ class ContactDetailPage extends StatelessWidget {
       context: context,
       builder:
           (contextEdit) => AlertDialog(
-            title: Text("연락처 수정"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: _editNameController,
-                  decoration: InputDecoration(labelText: "이름"),
-                ),
-                TextField(
-                  controller: _editPhoneController,
-                  decoration: InputDecoration(labelText: "전화번호"),
-                  keyboardType: TextInputType.phone,
-                ),
-                TextField(
-                  controller: _editEmailController,
-                  decoration: InputDecoration(labelText: "이메일"),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                TextField(
-                  controller: _editAdressController,
-                  decoration: InputDecoration(labelText: "주소"),
-                ),
-                TextField(
-                  controller: _editGroupontroller,
-                  decoration: InputDecoration(labelText: "그룹"),
-                ),
-              ],
+        title: Text("연락처 수정"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _editNameController,
+              decoration: InputDecoration(labelText: "이름"),
             ),
+            TextField(
+              controller: _editPhoneController,
+              decoration: InputDecoration(labelText: "전화번호"),
+              keyboardType: TextInputType.phone,
+            ),
+            TextField(
+              controller: _editEmailController,
+              decoration: InputDecoration(labelText: "이메일"),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            TextField(
+              controller: _editAdressController,
+              decoration: InputDecoration(labelText: "주소"),
+            ),
+            TextField(
+              controller: _editGroupontroller,
+              decoration: InputDecoration(labelText: "그룹"),
+            ),
+          ],
+        ),
 
-            actions: [
-              TextButton(
-                child: Text("취소"),
-                onPressed: () => Navigator.pop(contextEdit),
-              ),
-              ElevatedButton(
-                child: Text("수정"),
-                onPressed: () async {
-                  await _updateContact(context); // API 호출 후 수정 반영
-                },
-              ),
-            ],
+        actions: [
+          TextButton(
+            child: Text("취소"),
+            onPressed: () => Navigator.pop(contextEdit),
           ),
+          ElevatedButton(
+            child: Text("수정"),
+            onPressed: () async {
+              await _updateContact(context); // API 호출 후 수정 반영
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -122,24 +166,24 @@ class ContactDetailPage extends StatelessWidget {
       context: context,
       builder:
           (contextDelete) => AlertDialog(
-            title: Text("삭제 확인"),
-            content: Text("${contact.name}을(를) 삭제하시겠습니까?"),
-            actions: [
-              TextButton(
-                child: Text("취소"),
-                onPressed: () => Navigator.pop(contextDelete),
-              ),
-              ElevatedButton(
-                child: Text("삭제"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                ),
-                onPressed: () async {
-                  _deleteContact(context);
-                },
-              ),
-            ],
+        title: Text("삭제 확인"),
+        content: Text("${contact.name}을(를) 삭제하시겠습니까?"),
+        actions: [
+          TextButton(
+            child: Text("취소"),
+            onPressed: () => Navigator.pop(contextDelete),
           ),
+          ElevatedButton(
+            child: Text("삭제"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+            ),
+            onPressed: () async {
+              _deleteContact(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 
