@@ -159,7 +159,30 @@ class ContactDetailPage extends StatelessWidget {
       ),
     );
   }
+  void _deleteContact(BuildContext context) async {
+    try {
+      var dio = Dio();
+      dio.options.headers['Content-Type'] = 'application/json';
 
+      String apiUrl = "http://10.0.2.2:8099/api/user/${contact.userId}";
+
+      //  서버에서 DELETE 요청 보내기
+      final response = await dio.delete(apiUrl);
+
+      if (response.statusCode == 200) {
+        onDelete(contact); // 리스트에서 삭제 반영
+        Navigator.pop(context);
+        Navigator.pop(context);
+      } else {
+        throw Exception("API 삭제 요청 실패");
+      }
+    } catch (e) {
+      print("연락처 삭제 실패: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("삭제에 실패했습니다. 다시 시도해주세욤")),
+      );
+    }
+  }
   void _showDeleteConfirm(BuildContext context) {
     showDialog(
       context: context,
@@ -179,8 +202,8 @@ class ContactDetailPage extends StatelessWidget {
                 ),
                 onPressed: () {
                   onDelete(contact);
-                  Navigator.pop(contextDelete); // 다이얼로그 닫기
-                  Navigator.pop(context); // 상세 페이지 닫기 -> 리스트로 이동
+                  // Navigator.pop(contextDelete); // 다이얼로그 닫기
+                  // Navigator.pop(context); // 상세 페이지 닫기 -> 리스트로 이동
                 },
               ),
             ],
