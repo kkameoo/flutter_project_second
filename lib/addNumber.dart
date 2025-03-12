@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_project_second/contactVo.dart';
 
 class AddNumberForm extends StatefulWidget {
-  const AddNumberForm({super.key});
+  final Function() onadd;
+  const AddNumberForm({required this.onadd, super.key});
 
   @override
   _AddNumberFormState createState() => _AddNumberFormState();
@@ -60,7 +62,10 @@ class _AddNumberFormState extends State<AddNumberForm> {
               ElevatedButton(
                 onPressed: () {
                   if (_nameController.text.isNotEmpty &&
-                      _phoneController.text.isNotEmpty) {
+                      _emailController.text.isNotEmpty &&
+                      _phoneController.text.isNotEmpty &&
+                      _addressController.text.isNotEmpty &&
+                      _groupController.text.isNotEmpty) {
                     _addContact(); // 리스트에 추가
                     // Navigator.pop(context); // 돌아가기
                   }
@@ -97,6 +102,9 @@ class _AddNumberFormState extends State<AddNumberForm> {
 
       // 응답
       if (response.statusCode == 200) {
+        // ContactVo updatedContact = ContactVo.fromJson(response.data);
+
+        widget.onadd();
         // 목록 페이지로
         Navigator.pop(context);
         // Navigator.pushNamed(context, "/");

@@ -5,8 +5,8 @@ import 'list.dart';
 
 class ContactDetailPage extends StatelessWidget {
   final ContactVo contact; // 현재 선택된 연락처 정보
-  final Function(ContactVo) onEdit; // 수정된 데이터를 리스트에 반영
-  final Function(ContactVo) onDelete;
+  final Function() onEdit; // 수정된 데이터를 리스트에 반영
+  final Function() onDelete;
 
   ContactDetailPage({
     required this.contact,
@@ -165,7 +165,7 @@ class ContactDetailPage extends StatelessWidget {
       if (response.statusCode == 200) {
         // 서버 응답이 정상이면 ui업데이트
         ContactVo updatedContact = ContactVo.fromJson(response.data);
-        onEdit(updatedContact); //  리스트에서 데이터 변경 반영
+        onEdit(); //  리스트에서 데이터 변경 반영
         // Navigator.pop(context);
         Navigator.pop(context);
       } else {
@@ -190,7 +190,7 @@ class ContactDetailPage extends StatelessWidget {
       final response = await dio.delete(apiUrl);
 
       if (response.statusCode == 200) {
-        onDelete(contact); // 리스트에서 삭제 반영
+        onDelete(); // 리스트에서 삭제 반영
         Navigator.pop(context);
       } else {
         throw Exception("API 삭제 요청 실패");

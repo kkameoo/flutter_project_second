@@ -120,16 +120,12 @@ class _ContactListPageState extends State<ContactListPage> {
                               builder:
                                   (context) => ContactDetailPage(
                                     contact: contact,
-                                    onEdit: (editedContact) {
-                                      setState(() {
-                                        contactListFuture = getContactList();
-                                      });
+                                    onEdit: () {
+                                      _updateState();
                                       Navigator.pop(context);
                                     },
-                                    onDelete: (deletedContact) {
-                                      setState(() {
-                                        contactListFuture = getContactList();
-                                      });
+                                    onDelete: () {
+                                      _updateState();
                                       Navigator.pop(context);
                                     },
                                   ),
@@ -147,7 +143,14 @@ class _ContactListPageState extends State<ContactListPage> {
                 //  연락처 추가 페이지로 이동
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddNumberForm()),
+                  MaterialPageRoute(
+                    builder:
+                        (context) => AddNumberForm(
+                          onadd: () {
+                            _updateState();
+                          },
+                        ),
+                  ),
                 );
               },
               child: Icon(Icons.add), //  연락처 추가 버튼
@@ -193,9 +196,9 @@ class _ContactListPageState extends State<ContactListPage> {
     }
   }
 
-  //  연락처 수정 함수
-  void _editContact() {}
-
-  //  연락처 삭제 함수
-  void _deleteContact() {}
+  void _updateState() {
+    setState(() {
+      contactListFuture = getContactList();
+    });
+  }
 }
