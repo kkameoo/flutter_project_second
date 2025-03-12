@@ -8,7 +8,7 @@ class HomeForm extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("홈"),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor:  Colors.orangeAccent,
       ),
       body: _HomeForm(),
     );
