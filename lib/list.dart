@@ -5,18 +5,6 @@ import 'package:flutter_project_second/contact_detail.dart'; // 추가1
 import 'package:dio/dio.dart'; // 추가
 import 'package:flutter_project_second/contactVo.dart';
 
-// class ListForm extends StatelessWidget {
-//   const ListForm({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       theme: ThemeData(primarySwatch: Colors.orange),
-//       home: ContactListPage(),
-//     );
-//   }
-// }
 
 // 연락처 목록을 보여주는 페이지
 class ContactListPage extends StatefulWidget {
@@ -46,7 +34,7 @@ class _ContactListPageState extends State<ContactListPage> {
     super.didChangeDependencies();
     contactListFuture = getContactList(); // 서버로부터 데이터 수신
   }
-  //추가
+
   void _filterContacts() {
     final query = _searchController.text.toLowerCase();
     setState(() {
@@ -57,7 +45,6 @@ class _ContactListPageState extends State<ContactListPage> {
     });
   }
 
-  //추가
   @override
   void dispose() {
     _searchController.dispose();
