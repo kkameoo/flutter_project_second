@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_project_second/contactVo.dart';
-import 'list.dart';
 
 class AddNumberForm extends StatefulWidget {
   const AddNumberForm({super.key});
@@ -29,49 +27,51 @@ class _AddNumberFormState extends State<AddNumberForm> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: '이름'),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(labelText: '이메일'),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: _phoneController,
-              decoration: InputDecoration(labelText: '전화번호'),
-              keyboardType: TextInputType.phone,
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: _addressController,
-              decoration: InputDecoration(labelText: '주소'),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: _groupController,
-              decoration: InputDecoration(labelText: '그룹'),
-            ),
-            SizedBox(height: 20),
-
-            ElevatedButton(
-              onPressed: () {
-                if (_nameController.text.isNotEmpty &&
-                    _phoneController.text.isNotEmpty) {
-                  _addContact(); // 리스트에 추가
-                  Navigator.pop(context); // 돌아가기
-                }
-              },
-              child: Text("추가하기"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orangeAccent,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(
+                controller: _nameController,
+                decoration: InputDecoration(labelText: '이름'),
               ),
-            ),
-          ],
+              SizedBox(height: 20),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(labelText: '이메일'),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: _phoneController,
+                decoration: InputDecoration(labelText: '전화번호'),
+                keyboardType: TextInputType.phone,
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: _addressController,
+                decoration: InputDecoration(labelText: '주소'),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: _groupController,
+                decoration: InputDecoration(labelText: '그룹'),
+              ),
+              SizedBox(height: 20),
+
+              ElevatedButton(
+                onPressed: () {
+                  if (_nameController.text.isNotEmpty &&
+                      _phoneController.text.isNotEmpty) {
+                    _addContact(); // 리스트에 추가
+                    // Navigator.pop(context); // 돌아가기
+                  }
+                },
+                child: Text("추가하기"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orangeAccent,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -89,14 +89,14 @@ class _AddNumberFormState extends State<AddNumberForm> {
         data: {
           "name": _nameController.text,
           "email": _emailController.text,
-          "phoneNumber": _phoneController,
-          "address": _addressController,
-          "group": _groupController,
+          "phoneNumber": _phoneController.text,
+          "address": _addressController.text,
+          "group": _groupController.text,
         },
       );
 
       // 응답
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         // 목록 페이지로
         Navigator.pop(context);
         // Navigator.pushNamed(context, "/");

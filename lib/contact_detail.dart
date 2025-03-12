@@ -21,6 +21,46 @@ class ContactDetailPage extends StatelessWidget {
   final TextEditingController _editAdressController = TextEditingController();
   final TextEditingController _editGroupontroller = TextEditingController();
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("연락처 상세"),
+        backgroundColor: Colors.orangeAccent,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () => _showEditDialog(context),
+          ),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () => _showDeleteConfirm(context),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("이름: ${contact.name}", style: TextStyle(fontSize: 20)),
+            SizedBox(height: 10),
+            Text("이메일: ${contact.email}", style: TextStyle(fontSize: 18)),
+            SizedBox(height: 10),
+            Text(
+              "전화번호: ${contact.phoneNumber}",
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(height: 10),
+            Text("주소: ${contact.address}", style: TextStyle(fontSize: 18)),
+            SizedBox(height: 10),
+            Text("그룹: ${contact.group}", style: TextStyle(fontSize: 18)),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showEditDialog(BuildContext context) {
     _editNameController.text = contact.name;
     _editPhoneController.text = contact.phoneNumber;
@@ -70,13 +110,32 @@ class ContactDetailPage extends StatelessWidget {
                 child: Text("수정"),
                 onPressed: () async {
                   await _updateContact(context); // API 호출 후 수정 반영
-                  // final updatedContact = ContactVo(
-                  //   name: _editNameController.text,
-                  //   phoneNumber: _editPhoneController.text,
-                  // );
-                  // onEdit(updatedContact);
-                  // Navigator.pop(contextEdit); // 다이얼로그 닫기
-                  // Navigator.pop(context); // 상세 페이지 닫기 -> 리스트로 이동
+                },
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _showDeleteConfirm(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (contextDelete) => AlertDialog(
+            title: Text("삭제 확인"),
+            content: Text("${contact.name}을(를) 삭제하시겠습니까?"),
+            actions: [
+              TextButton(
+                child: Text("취소"),
+                onPressed: () => Navigator.pop(contextDelete),
+              ),
+              ElevatedButton(
+                child: Text("삭제"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                ),
+                onPressed: () async {
+                  _deleteContact(context);
                 },
               ),
             ],
@@ -120,45 +179,6 @@ class ContactDetailPage extends StatelessWidget {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("연락처 상세"),
-        backgroundColor: Colors.orangeAccent,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () => _showEditDialog(context),
-          ),
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () => _showDeleteConfirm(context),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("이름: ${contact.name}", style: TextStyle(fontSize: 20)),
-            SizedBox(height: 10),
-            Text("이메일: ${contact.email}", style: TextStyle(fontSize: 18)),
-            SizedBox(height: 10),
-            Text(
-              "전화번호: ${contact.phoneNumber}",
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 10),
-            Text("주소: ${contact.address}", style: TextStyle(fontSize: 18)),
-            SizedBox(height: 10),
-            Text("그룹: ${contact.group}", style: TextStyle(fontSize: 18)),
-          ],
-        ),
-      ),
-    );
-  }
   void _deleteContact(BuildContext context) async {
     try {
       var dio = Dio();
@@ -172,42 +192,14 @@ class ContactDetailPage extends StatelessWidget {
       if (response.statusCode == 200) {
         onDelete(contact); // 리스트에서 삭제 반영
         Navigator.pop(context);
-        Navigator.pop(context);
       } else {
         throw Exception("API 삭제 요청 실패");
       }
     } catch (e) {
       print("연락처 삭제 실패: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("삭제에 실패했습니다. 다시 시도해주세욤")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("삭제에 실패했습니다. 다시 시도해주세욤")));
     }
-  }
-  void _showDeleteConfirm(BuildContext context) {
-    showDialog(
-      context: context,
-      builder:
-          (contextDelete) => AlertDialog(
-            title: Text("삭제 확인"),
-            content: Text("${contact.name}을(를) 삭제하시겠습니까?"),
-            actions: [
-              TextButton(
-                child: Text("취소"),
-                onPressed: () => Navigator.pop(contextDelete),
-              ),
-              ElevatedButton(
-                child: Text("삭제"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                ),
-                onPressed: () {
-                  onDelete(contact);
-                  // Navigator.pop(contextDelete); // 다이얼로그 닫기
-                  // Navigator.pop(context); // 상세 페이지 닫기 -> 리스트로 이동
-                },
-              ),
-            ],
-          ),
-    );
   }
 }
