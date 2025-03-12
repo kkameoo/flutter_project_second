@@ -18,7 +18,7 @@ class _AddNumberFormState extends State<AddNumberForm> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
-  final _groupController = TextEditingController();
+  String _selectedGroup = "";
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +53,33 @@ class _AddNumberFormState extends State<AddNumberForm> {
                 decoration: InputDecoration(labelText: '주소'),
               ),
               SizedBox(height: 20),
-              TextField(
-                controller: _groupController,
-                decoration: InputDecoration(labelText: '그룹'),
+              Column(
+                children: [
+                  TextButton(
+                    child: Text("그룹"),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("그룹 선택"),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _buildMenuItem(context, "친구"),
+                                _buildMenuItem(context, "친척"),
+                                _buildMenuItem(context, "가족"),
+                                _buildMenuItem(context, "직장"),
+                                _buildMenuItem(context, "기타"),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  Text(_selectedGroup),
+                ],
               ),
               SizedBox(height: 20),
 
@@ -65,7 +89,7 @@ class _AddNumberFormState extends State<AddNumberForm> {
                       _emailController.text.isNotEmpty &&
                       _phoneController.text.isNotEmpty &&
                       _addressController.text.isNotEmpty &&
-                      _groupController.text.isNotEmpty) {
+                      _selectedGroup.isNotEmpty) {
                     _addContact(); // 리스트에 추가
                     // Navigator.pop(context); // 돌아가기
                   }
@@ -79,6 +103,19 @@ class _AddNumberFormState extends State<AddNumberForm> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildMenuItem(BuildContext context, String label) {
+    return ListTile(
+      title: Text(label),
+      onTap: () {
+        setState(() {
+          _selectedGroup = label; // 선택된 값을 업데이트
+        });
+        print("$_selectedGroup 선택됨"); // 선택된 메뉴 출력
+        Navigator.pop(context); // 다이얼로그 닫기
+      },
     );
   }
 
@@ -96,7 +133,7 @@ class _AddNumberFormState extends State<AddNumberForm> {
           "email": _emailController.text,
           "phoneNumber": _phoneController.text,
           "address": _addressController.text,
-          "group": _groupController.text,
+          "group": _selectedGroup,
         },
       );
 
