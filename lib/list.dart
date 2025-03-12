@@ -83,23 +83,28 @@ class _ContactListPageState extends State<ContactListPage> {
                             ),
                           ),
                           onTap: () {
-                            // 연락처 클릭 시 상세 정보 페이지로 이동
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder:
-                            //         (context) => ContactDetailPage(
-                            //           contact: snapshot.data![index],
-                            //           onEdit:
-                            //               (newContact) => _editContact(
-                            //                 snapshot.data![index],
-                            //                 newContact,
-                            //               ),
-                            //
-                            //           onDelete: _deleteContact,
-                            //         ),
-                            //   ),
-                            // );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ContactDetailPage(
+                                  contact: snapshot.data![index],
+                                  onEdit: (editedContact) {
+                                    // 수정 완료 시 리스트 갱신
+                                    setState(() {
+                                      contactListFuture = getContactList();
+                                    });
+                                    Navigator.pop(context); // 리스트로 복귀
+                                  },
+                                  onDelete: (deletedContact) {
+                                    // 삭제 완료 시 리스트 갱신
+                                    setState(() {
+                                      contactListFuture = getContactList();
+                                    });
+                                    Navigator.pop(context); // 리스트로 복귀
+                                  },
+                                ),
+                              ),
+                            );
                           },
                         );
                       },

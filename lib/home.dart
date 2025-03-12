@@ -40,10 +40,10 @@ class _HomeFormState extends State<_HomeForm> {
                 height: 200,  // 네모의 세로 크기
                 decoration: BoxDecoration(
                   color: Colors.blue,  // 배경색 추가
-                  image: DecorationImage(
-                    image: AssetImage('../android/img/다운로드.jpg'),  // 이미지 경로
-                    fit: BoxFit.cover,  // 이미지를 네모 상자에 맞게 꽉 채움
-                  ),
+                  // image: DecorationImage(
+                  //   image: AssetImage('../android/img/다운로드.jpg'),  // 이미지 경로
+                  //   fit: BoxFit.cover,  // 이미지를 네모 상자에 맞게 꽉 채움
+                  // ),
                 ),
                 child: GestureDetector(
                   onTap: () {
@@ -57,10 +57,10 @@ class _HomeFormState extends State<_HomeForm> {
                 height: 200,  // 네모의 세로 크기
                 decoration: BoxDecoration(
                   color: Colors.red,  // 배경색 추가
-                  image: DecorationImage(
-                    image: AssetImage('assets/your_image2.png'),  // 다른 이미지 경로
-                    fit: BoxFit.cover,  // 이미지를 네모 상자에 맞게 꽉 채움
-                  ),
+                  // image: DecorationImage(
+                  //   image: AssetImage('assets/your_image2.png'),  // 다른 이미지 경로
+                  //   fit: BoxFit.cover,  // 이미지를 네모 상자에 맞게 꽉 채움
+                  // ),
                 ),
                 child: GestureDetector(
                   onTap: () {
