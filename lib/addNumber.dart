@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_second/contactVo.dart';
 import 'list.dart';
 
 class AddNumberForm extends StatefulWidget {
-  final Function(Contact) onAdd;
+  final Function(ContactVo) onAdd;
 
   const AddNumberForm({required this.onAdd, super.key});
 
@@ -37,15 +38,16 @@ class _AddNumberFormState extends State<AddNumberForm> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                if (_nameController.text.isNotEmpty &&
-                    _phoneController.text.isNotEmpty) {
-                  final newContact = Contact(
-                    name: _nameController.text,
-                    phoneNumber: _phoneController.text,
-                  );
-                  widget.onAdd(newContact); // 리스트에 추가
-                  Navigator.pop(context);  // 돌아가기
-                }
+                // if (_nameController.text.isNotEmpty &&
+                //     _phoneController.text.isNotEmpty) {
+                //   final newContact = ContactVo(
+                //     userId: _,
+                //     name: _nameController.text,
+                //     phoneNumber: _phoneController.text,
+                //   );
+                //   widget.onAdd(newContact); // 리스트에 추가
+                //   Navigator.pop(context);  // 돌아가기
+                // }
               },
               child: Text("추가하기"),
               style: ElevatedButton.styleFrom(
