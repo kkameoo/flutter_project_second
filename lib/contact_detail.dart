@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'list.dart';
 
 class ContactDetailPage extends StatelessWidget {
-  final ContactVo contact;  // 현재 선택된 연락처 정보
+  final ContactVo contact; // 현재 선택된 연락처 정보
   final Function(ContactVo) onEdit; // 수정된 데이터를 리스트에 반영
   final Function(ContactVo) onDelete;
 
@@ -106,17 +106,17 @@ class ContactDetailPage extends StatelessWidget {
       if (response.statusCode == 200) {
         // 서버 응답이 정상이면 ui업데이트
         ContactVo updatedContact = ContactVo.fromJson(response.data);
-        onEdit(updatedContact);  //  리스트에서 데이터 변경 반영
-        Navigator.pop(context);
+        onEdit(updatedContact); //  리스트에서 데이터 변경 반영
+        // Navigator.pop(context);
         Navigator.pop(context);
       } else {
         throw Exception("API 수정 요청 실패");
       }
     } catch (e) {
       print("연락처 수정 실패욤: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("수정에 실패했습니다. 다시 시도해주세요"),)
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("수정에 실패했습니다. 다시 시도해주세요")));
     }
   }
 
@@ -146,7 +146,10 @@ class ContactDetailPage extends StatelessWidget {
             SizedBox(height: 10),
             Text("이메일: ${contact.email}", style: TextStyle(fontSize: 18)),
             SizedBox(height: 10),
-            Text("전화번호: ${contact.phoneNumber}", style: TextStyle(fontSize: 18)),
+            Text(
+              "전화번호: ${contact.phoneNumber}",
+              style: TextStyle(fontSize: 18),
+            ),
             SizedBox(height: 10),
             Text("주소: ${contact.address}", style: TextStyle(fontSize: 18)),
             SizedBox(height: 10),
@@ -162,26 +165,26 @@ class ContactDetailPage extends StatelessWidget {
       context: context,
       builder:
           (contextDelete) => AlertDialog(
-        title: Text("삭제 확인"),
-        content: Text("${contact.name}을(를) 삭제하시겠습니까?"),
-        actions: [
-          TextButton(
-            child: Text("취소"),
-            onPressed: () => Navigator.pop(contextDelete),
+            title: Text("삭제 확인"),
+            content: Text("${contact.name}을(를) 삭제하시겠습니까?"),
+            actions: [
+              TextButton(
+                child: Text("취소"),
+                onPressed: () => Navigator.pop(contextDelete),
+              ),
+              ElevatedButton(
+                child: Text("삭제"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                ),
+                onPressed: () {
+                  onDelete(contact);
+                  Navigator.pop(contextDelete); // 다이얼로그 닫기
+                  Navigator.pop(context); // 상세 페이지 닫기 -> 리스트로 이동
+                },
+              ),
+            ],
           ),
-          ElevatedButton(
-            child: Text("삭제"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-            ),
-            onPressed: () {
-              onDelete(contact);
-              Navigator.pop(contextDelete); // 다이얼로그 닫기
-              Navigator.pop(context); // 상세 페이지 닫기 -> 리스트로 이동
-            },
-          ),
-        ],
-      ),
     );
   }
 }

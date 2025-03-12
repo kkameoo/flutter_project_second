@@ -5,7 +5,6 @@ import 'package:flutter_project_second/contact_detail.dart'; // 추가1
 import 'package:dio/dio.dart'; // 추가
 import 'package:flutter_project_second/contactVo.dart';
 
-
 // 연락처 목록을 보여주는 페이지
 class ContactListPage extends StatefulWidget {
   @override
@@ -38,10 +37,11 @@ class _ContactListPageState extends State<ContactListPage> {
   void _filterContacts() {
     final query = _searchController.text.toLowerCase();
     setState(() {
-      _filteredContacts = _allContacts.where((contact) {
-        return contact.name.toLowerCase().contains(query) ||
-            contact.phoneNumber.contains(query);
-      }).toList();
+      _filteredContacts =
+          _allContacts.where((contact) {
+            return contact.name.toLowerCase().contains(query) ||
+                contact.phoneNumber.contains(query);
+          }).toList();
     });
   }
 
@@ -66,13 +66,14 @@ class _ContactListPageState extends State<ContactListPage> {
           return Center(child: Text("할 일이 없습니다."));
         } else {
           _allContacts = snapshot.data!;
-          _filteredContacts = _searchController.text.isEmpty
-              ? _allContacts
-              : _allContacts.where((contact) {
-            final query = _searchController.text.toLowerCase();
-            return contact.name.toLowerCase().contains(query) ||
-                contact.phoneNumber.contains(query);
-          }).toList();
+          _filteredContacts =
+              _searchController.text.isEmpty
+                  ? _allContacts
+                  : _allContacts.where((contact) {
+                    final query = _searchController.text.toLowerCase();
+                    return contact.name.toLowerCase().contains(query) ||
+                        contact.phoneNumber.contains(query);
+                  }).toList();
 
           return Scaffold(
             appBar: AppBar(
@@ -100,31 +101,38 @@ class _ContactListPageState extends State<ContactListPage> {
                       return ListTile(
                         title: Text(
                           contact.name,
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         subtitle: Text(
                           contact.phoneNumber,
-                          style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                          ),
                         ),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ContactDetailPage(
-                                contact: contact,
-                                onEdit: (editedContact) {
-                                  setState(() {
-                                    contactListFuture = getContactList();
-                                  });
-                                  Navigator.pop(context);
-                                },
-                                onDelete: (deletedContact) {
-                                  setState(() {
-                                    contactListFuture = getContactList();
-                                  });
-                                  Navigator.pop(context);
-                                },
-                              ),
+                              builder:
+                                  (context) => ContactDetailPage(
+                                    contact: contact,
+                                    onEdit: (editedContact) {
+                                      setState(() {
+                                        contactListFuture = getContactList();
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    onDelete: (deletedContact) {
+                                      setState(() {
+                                        contactListFuture = getContactList();
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                  ),
                             ),
                           );
                         },
@@ -137,12 +145,10 @@ class _ContactListPageState extends State<ContactListPage> {
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 //  연락처 추가 페이지로 이동
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => AddNumberForm(onAdd: _addContact),
-                //   ),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddNumberForm()),
+                );
               },
               child: Icon(Icons.add), //  연락처 추가 버튼
               backgroundColor: Colors.orangeAccent,
@@ -185,13 +191,6 @@ class _ContactListPageState extends State<ContactListPage> {
       print("연락처 데이터를 불러오는데 실패했습니다: $e");
       return []; //  오류 발생 시 빈 리스트 반환
     }
-  }
-
-  //  연락처 추가 함수
-  void _addContact() {
-    // setState(() {
-    //    ContactVo.add(contact);
-    // });
   }
 
   //  연락처 수정 함수

@@ -1,19 +1,24 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project_second/contactVo.dart';
 import 'list.dart';
 
 class AddNumberForm extends StatefulWidget {
-  final Function(ContactVo) onAdd;
-
-  const AddNumberForm({required this.onAdd, super.key});
+  const AddNumberForm({super.key});
 
   @override
   _AddNumberFormState createState() => _AddNumberFormState();
 }
 
 class _AddNumberFormState extends State<AddNumberForm> {
+  // API 엔드포인트 설정
+  static const String apiEndpoint = "http://10.0.2.2:8099/api/user";
+
   final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _groupController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -30,24 +35,36 @@ class _AddNumberFormState extends State<AddNumberForm> {
               controller: _nameController,
               decoration: InputDecoration(labelText: '이름'),
             ),
+            SizedBox(height: 20),
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(labelText: '이메일'),
+            ),
+            SizedBox(height: 20),
             TextField(
               controller: _phoneController,
               decoration: InputDecoration(labelText: '전화번호'),
               keyboardType: TextInputType.phone,
             ),
             SizedBox(height: 20),
+            TextField(
+              controller: _addressController,
+              decoration: InputDecoration(labelText: '주소'),
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: _groupController,
+              decoration: InputDecoration(labelText: '그룹'),
+            ),
+            SizedBox(height: 20),
+
             ElevatedButton(
               onPressed: () {
-                // if (_nameController.text.isNotEmpty &&
-                //     _phoneController.text.isNotEmpty) {
-                //   final newContact = ContactVo(
-                //     userId: _,
-                //     name: _nameController.text,
-                //     phoneNumber: _phoneController.text,
-                //   );
-                //   widget.onAdd(newContact); // 리스트에 추가
-                //   Navigator.pop(context);  // 돌아가기
-                // }
+                if (_nameController.text.isNotEmpty &&
+                    _phoneController.text.isNotEmpty) {
+                  _addContact(); // 리스트에 추가
+                  Navigator.pop(context); // 돌아가기
+                }
               },
               child: Text("추가하기"),
               style: ElevatedButton.styleFrom(
@@ -58,5 +75,36 @@ class _AddNumberFormState extends State<AddNumberForm> {
         ),
       ),
     );
+  }
+
+  //  연락처 추가 함수
+  void _addContact() async {
+    try {
+      // 요청
+      var dio = Dio();
+      dio.options.headers['Content-Type'] = 'application/json';
+      // Post 요청
+      final response = await dio.post(
+        apiEndpoint,
+        data: {
+          "name": _nameController.text,
+          "email": _emailController.text,
+          "phoneNumber": _phoneController,
+          "address": _addressController,
+          "group": _groupController,
+        },
+      );
+
+      // 응답
+      if (response.statusCode == 201) {
+        // 목록 페이지로
+        Navigator.pop(context);
+        // Navigator.pushNamed(context, "/");
+      } else {
+        throw Exception("할 일을 추가하지 못했습니다. ${response.statusCode}");
+      }
+    } catch (e) {
+      throw Exception("할 일을 추가하지 못했습니다: $e");
+    }
   }
 }

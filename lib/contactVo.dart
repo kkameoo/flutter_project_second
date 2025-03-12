@@ -26,4 +26,15 @@ class ContactVo {
       group: apiData['group'],
     );
   }
+
+  // 현재 TodoItemVo 객체를 Map 형식으로 내보내는 메서드
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'name': name,
+      'phoneNumber': phoneNumber,
+      'address': address,
+      'group': group,
+    };
+  }
 }
