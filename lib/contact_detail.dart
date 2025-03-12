@@ -3,16 +3,26 @@ import 'package:flutter_project_second/contactVo.dart';
 import 'package:dio/dio.dart';
 import 'list.dart';
 
-class ContactDetailPage extends StatelessWidget {
+class ContactDetailPage extends StatefulWidget {
+  // ✅ StatefulWidget으로 변경
+
   final ContactVo contact; // 현재 선택된 연락처 정보
   final Function() onEdit; // 수정된 데이터를 리스트에 반영
   final Function() onDelete;
 
-  ContactDetailPage({
+  const ContactDetailPage({
     required this.contact,
     required this.onEdit,
     required this.onDelete,
+    super.key,
   });
+
+  @override
+  _ContactDetailPage createState() => _ContactDetailPage();
+}
+
+class _ContactDetailPage extends State<ContactDetailPage> {
+  late String _selectedGroup = ""; // 초기 선택값
 
   // 수정 입력 필드를 위한 컨트롤러
   final TextEditingController _editNameController = TextEditingController();
@@ -39,125 +49,170 @@ class ContactDetailPage extends StatelessWidget {
           ),
         ],
       ),
-        body: Padding(
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-    // ✅ 이름 박스 (둥근 테두리 & 흰색 배경)
-    Container(
-    width: double.infinity,
-    padding: EdgeInsets.symmetric(vertical: 20),
-    decoration: BoxDecoration(
-    color: Colors.white, // ✅ 배경 흰색
-    borderRadius: BorderRadius.circular(15), // ✅ 둥근 테두리
-    boxShadow: [
-    BoxShadow(
-    color: Colors.grey.withOpacity(0.3), // ✅ 그림자 효과
-    blurRadius: 10,
-    spreadRadius: 2,
-    offset: Offset(0, 5),
-    ),
-    ],
-    ),
-    child: Center(
-    child: Text(
-    "${contact.name}",
-    style: TextStyle(fontSize: 50, fontWeight: FontWeight.w900),
-    textAlign: TextAlign.center,
-    ),
-    ),
-    ),
-    SizedBox(height: 40),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // ✅ 이름 박스 (둥근 테두리 & 흰색 배경)
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 20),
+              decoration: BoxDecoration(
+                color: Colors.white, // ✅ 배경 흰색
+                borderRadius: BorderRadius.circular(15), // ✅ 둥근 테두리
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3), // ✅ 그림자 효과
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text(
+                  "${widget.contact.name}",
+                  style: TextStyle(fontSize: 50, fontWeight: FontWeight.w900),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            SizedBox(height: 40),
 
-    // ✅ 이메일, 전화번호, 주소, 그룹을 하나의 박스로 묶기
-    Container(
-    width: double.infinity,
-    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-    decoration: BoxDecoration(
-    color: Colors.white, // ✅ 배경 흰색
-    borderRadius: BorderRadius.circular(15), // ✅ 둥근 테두리
-    boxShadow: [
-    BoxShadow(
-    color: Colors.grey.withOpacity(0.3), // ✅ 그림자 효과
-    blurRadius: 10,
-    spreadRadius: 2,
-    offset: Offset(0, 5),
-    ),
-    ],
-    ),
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-    Text("이메일: ${contact.email}", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700)),
-    SizedBox(height: 20),
-    Text("전화번호: ${contact.phoneNumber}", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700)),
-    SizedBox(height: 20),
-    Text("주소: ${contact.address}", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700)),
-    SizedBox(height: 20),
-    Text("그룹: ${contact.group}", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700)),
-            ],
-           ),
-          ),
-         ],
+            // ✅ 이메일, 전화번호, 주소, 그룹을 하나의 박스로 묶기
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.white, // ✅ 배경 흰색
+                borderRadius: BorderRadius.circular(15), // ✅ 둥근 테두리
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3), // ✅ 그림자 효과
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "이메일: ${widget.contact.email}",
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "전화번호: ${widget.contact.phoneNumber}",
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "주소: ${widget.contact.address}",
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "그룹: ${widget.contact.group}",
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
+  Widget _buildMenuItem(BuildContext context, String label) {
+    return ListTile(
+      title: Text(label),
+      onTap: () {
+        setState(() {
+          _selectedGroup = label; // 선택된 값을 업데이트
+        });
+        print("$_selectedGroup 선택됨"); // 선택된 메뉴 출력
+        Navigator.pop(context); // 다이얼로그 닫기
+      },
+    );
+  }
+
   void _showEditDialog(BuildContext context) {
-    _editNameController.text = contact.name;
-    _editPhoneController.text = contact.phoneNumber;
-    _editEmailController.text = contact.email;
-    _editAdressController.text = contact.address;
-    _editGroupontroller.text = contact.group;
+    _editNameController.text = widget.contact.name;
+    _editPhoneController.text = widget.contact.phoneNumber;
+    _editEmailController.text = widget.contact.email;
+    _editAdressController.text = widget.contact.address;
+    _selectedGroup = widget.contact.group;
 
     showDialog(
       context: context,
       builder:
           (contextEdit) => AlertDialog(
-        title: Text("연락처 수정"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _editNameController,
-              decoration: InputDecoration(labelText: "이름"),
+            title: Text("연락처 수정"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _editNameController,
+                  decoration: InputDecoration(labelText: "이름"),
+                ),
+                TextField(
+                  controller: _editPhoneController,
+                  decoration: InputDecoration(labelText: "전화번호"),
+                  keyboardType: TextInputType.phone,
+                ),
+                TextField(
+                  controller: _editEmailController,
+                  decoration: InputDecoration(labelText: "이메일"),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                TextField(
+                  controller: _editAdressController,
+                  decoration: InputDecoration(labelText: "주소"),
+                ),
+                TextButton(
+                  child: Text("그룹 선택"),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("그룹 선택"),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _buildMenuItem(context, "친구"),
+                              _buildMenuItem(context, "친척"),
+                              _buildMenuItem(context, "가족"),
+                              _buildMenuItem(context, "직장"),
+                              _buildMenuItem(context, "기타"),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+                Text("선택된 그룹: $_selectedGroup"),
+              ],
             ),
-            TextField(
-              controller: _editPhoneController,
-              decoration: InputDecoration(labelText: "전화번호"),
-              keyboardType: TextInputType.phone,
-            ),
-            TextField(
-              controller: _editEmailController,
-              decoration: InputDecoration(labelText: "이메일"),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            TextField(
-              controller: _editAdressController,
-              decoration: InputDecoration(labelText: "주소"),
-            ),
-            TextField(
-              controller: _editGroupontroller,
-              decoration: InputDecoration(labelText: "그룹"),
-            ),
-          ],
-        ),
 
-        actions: [
-          TextButton(
-            child: Text("취소"),
-            onPressed: () => Navigator.pop(contextEdit),
+            actions: [
+              TextButton(
+                child: Text("취소"),
+                onPressed: () => Navigator.pop(contextEdit),
+              ),
+              ElevatedButton(
+                child: Text("수정"),
+                onPressed: () async {
+                  await _updateContact(context); // API 호출 후 수정 반영
+                },
+              ),
+            ],
           ),
-          ElevatedButton(
-            child: Text("수정"),
-            onPressed: () async {
-              await _updateContact(context); // API 호출 후 수정 반영
-            },
-          ),
-        ],
-      ),
     );
   }
 
@@ -166,24 +221,24 @@ class ContactDetailPage extends StatelessWidget {
       context: context,
       builder:
           (contextDelete) => AlertDialog(
-        title: Text("삭제 확인"),
-        content: Text("${contact.name}을(를) 삭제하시겠습니까?"),
-        actions: [
-          TextButton(
-            child: Text("취소"),
-            onPressed: () => Navigator.pop(contextDelete),
+            title: Text("삭제 확인"),
+            content: Text("${widget.contact.name}을(를) 삭제하시겠습니까?"),
+            actions: [
+              TextButton(
+                child: Text("취소"),
+                onPressed: () => Navigator.pop(contextDelete),
+              ),
+              ElevatedButton(
+                child: Text("삭제"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                ),
+                onPressed: () async {
+                  _deleteContact(context);
+                },
+              ),
+            ],
           ),
-          ElevatedButton(
-            child: Text("삭제"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-            ),
-            onPressed: () async {
-              _deleteContact(context);
-            },
-          ),
-        ],
-      ),
     );
   }
 
@@ -192,15 +247,15 @@ class ContactDetailPage extends StatelessWidget {
       var dio = Dio();
       dio.options.headers['Content-Type'] = 'application/json';
 
-      String apiUrl = "http://10.0.2.2:8099/api/user/${contact.userId}";
+      String apiUrl = "http://10.0.2.2:8099/api/user/${widget.contact.userId}";
 
       Map<String, dynamic> updatedData = {
-        "userId": contact.userId,
+        "userId": widget.contact.userId,
         "name": _editNameController.text,
         "phoneNumber": _editPhoneController.text,
         "email": _editEmailController.text,
         "address": _editAdressController.text,
-        "group": _editGroupontroller.text,
+        "group": _selectedGroup,
       };
 
       // 서버에 PUT 요청 보내기
@@ -209,7 +264,7 @@ class ContactDetailPage extends StatelessWidget {
       if (response.statusCode == 200) {
         // 서버 응답이 정상이면 ui업데이트
         ContactVo updatedContact = ContactVo.fromJson(response.data);
-        onEdit(); //  리스트에서 데이터 변경 반영
+        widget.onEdit(); //  리스트에서 데이터 변경 반영
         // Navigator.pop(context);
         Navigator.pop(context);
       } else {
@@ -228,13 +283,13 @@ class ContactDetailPage extends StatelessWidget {
       var dio = Dio();
       dio.options.headers['Content-Type'] = 'application/json';
 
-      String apiUrl = "http://10.0.2.2:8099/api/user/${contact.userId}";
+      String apiUrl = "http://10.0.2.2:8099/api/user/${widget.contact.userId}";
 
       //  서버에서 DELETE 요청 보내기
       final response = await dio.delete(apiUrl);
 
       if (response.statusCode == 200) {
-        onDelete(); // 리스트에서 삭제 반영
+        widget.onDelete(); // 리스트에서 삭제 반영
         Navigator.pop(context);
       } else {
         throw Exception("API 삭제 요청 실패");

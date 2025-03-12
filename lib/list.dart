@@ -36,12 +36,15 @@ class _ContactListPageState extends State<ContactListPage> {
   void _filterContacts() {
     final query = _searchController.text.toLowerCase();
     setState(() {
-      _filteredContacts = _allContacts.where((contact) {
-        final matchesQuery = contact.name.toLowerCase().contains(query) ||
-            contact.phoneNumber.contains(query);
-        final matchesGroup = _selectedGroup == "전체" || contact.group == _selectedGroup;
-        return matchesQuery && matchesGroup;
-      }).toList();
+      _filteredContacts =
+          _allContacts.where((contact) {
+            final matchesQuery =
+                contact.name.toLowerCase().contains(query) ||
+                contact.phoneNumber.contains(query);
+            final matchesGroup =
+                _selectedGroup == "전체" || contact.group == _selectedGroup;
+            return matchesQuery && matchesGroup;
+          }).toList();
     });
   }
 
@@ -64,15 +67,19 @@ class _ContactListPageState extends State<ContactListPage> {
           return Center(child: Text("할 일이 없습니다."));
         } else {
           _allContacts = snapshot.data!;
-          _filteredContacts = _searchController.text.isEmpty && _selectedGroup == "전체"
-              ? _allContacts
-              : _allContacts.where((contact) {
-            final query = _searchController.text.toLowerCase();
-            final matchesQuery = contact.name.toLowerCase().contains(query) ||
-                contact.phoneNumber.contains(query);
-            final matchesGroup = _selectedGroup == "전체" || contact.group == _selectedGroup;
-            return matchesQuery && matchesGroup;
-          }).toList();
+          _filteredContacts =
+              _searchController.text.isEmpty && _selectedGroup == "전체"
+                  ? _allContacts
+                  : _allContacts.where((contact) {
+                    final query = _searchController.text.toLowerCase();
+                    final matchesQuery =
+                        contact.name.toLowerCase().contains(query) ||
+                        contact.phoneNumber.contains(query);
+                    final matchesGroup =
+                        _selectedGroup == "전체" ||
+                        contact.group == _selectedGroup;
+                    return matchesQuery && matchesGroup;
+                  }).toList();
 
           return Scaffold(
             appBar: AppBar(
@@ -116,17 +123,18 @@ class _ContactListPageState extends State<ContactListPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ContactDetailPage(
-                                contact: contact,
-                                onEdit: () {
-                                  _updateState();
-                                  Navigator.pop(context);
-                                },
-                                onDelete: () {
-                                  _updateState();
-                                  Navigator.pop(context);
-                                },
-                              ),
+                              builder:
+                                  (context) => ContactDetailPage(
+                                    contact: contact,
+                                    onEdit: () {
+                                      _updateState();
+                                      Navigator.pop(context);
+                                    },
+                                    onDelete: () {
+                                      _updateState();
+                                      Navigator.pop(context);
+                                    },
+                                  ),
                             ),
                           );
                         },
@@ -160,7 +168,7 @@ class _ContactListPageState extends State<ContactListPage> {
                         );
                       },
                     ),
-                    Text("선택된 그룹: \$_selectedGroup"),
+                    Text("선택된 그룹: $_selectedGroup"),
                   ],
                 ),
               ],
@@ -170,11 +178,12 @@ class _ContactListPageState extends State<ContactListPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddNumberForm(
-                      onadd: () {
-                        _updateState();
-                      },
-                    ),
+                    builder:
+                        (context) => AddNumberForm(
+                          onadd: () {
+                            _updateState();
+                          },
+                        ),
                   ),
                 );
               },
