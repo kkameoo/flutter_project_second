@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_second/contactVo.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_project_second/memo_controller.dart';
 import 'list.dart';
 
 class ContactDetailPage extends StatefulWidget {
-  // ✅ StatefulWidget으로 변경
+  // StatefulWidget으로 변경
 
   final ContactVo contact; // 현재 선택된 연락처 정보
   final Function() onEdit; // 수정된 데이터를 리스트에 반영
@@ -23,6 +24,8 @@ class ContactDetailPage extends StatefulWidget {
 
 class _ContactDetailPage extends State<ContactDetailPage> {
   late String _selectedGroup = ""; // 초기 선택값
+  final TextEditingController _memoController = TextEditingController(); //  메모 컨트롤러
+
 
   // 수정 입력 필드를 위한 컨트롤러
   final TextEditingController _editNameController = TextEditingController();
@@ -47,6 +50,10 @@ class _ContactDetailPage extends State<ContactDetailPage> {
             icon: Icon(Icons.delete),
             onPressed: () => _showDeleteConfirm(context),
           ),
+          IconButton(
+            icon: Icon(Icons.note), //
+            onPressed: () => _showMemoDialog(context),
+          ),
         ],
       ),
       body: Padding(
@@ -54,16 +61,16 @@ class _ContactDetailPage extends State<ContactDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // ✅ 이름 박스 (둥근 테두리 & 흰색 배경)
+            // 이름 박스
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: 20),
               decoration: BoxDecoration(
-                color: Colors.white, // ✅ 배경 흰색
-                borderRadius: BorderRadius.circular(15), // ✅ 둥근 테두리
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.3), // ✅ 그림자 효과
+                    color: Colors.grey.withOpacity(0.3),
                     blurRadius: 10,
                     spreadRadius: 2,
                     offset: Offset(0, 5),
@@ -80,16 +87,16 @@ class _ContactDetailPage extends State<ContactDetailPage> {
             ),
             SizedBox(height: 40),
 
-            // ✅ 이메일, 전화번호, 주소, 그룹을 하나의 박스로 묶기
+            //  이메일, 전화번호, 주소의 박스
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               decoration: BoxDecoration(
-                color: Colors.white, // ✅ 배경 흰색
-                borderRadius: BorderRadius.circular(15), // ✅ 둥근 테두리
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.3), // ✅ 그림자 효과
+                    color: Colors.grey.withOpacity(0.3),
                     blurRadius: 10,
                     spreadRadius: 2,
                     offset: Offset(0, 5),
@@ -123,6 +130,39 @@ class _ContactDetailPage extends State<ContactDetailPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showMemoDialog(BuildContext context) async {
+    // 1️⃣ Spring Boot API에서 기존 메모 불러오기
+    String existingMemo = await MemoController.getMemo(widget.contact.userId);
+
+    // 2️⃣ 가져온 데이터를 TextField에 적용
+    _memoController.text = existingMemo.isNotEmpty ? existingMemo : "메모가 없습니다.";
+
+    // 3️⃣ 모달창 띄우기
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("메모"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: _memoController,
+              maxLines: 5,
+              readOnly: true, // **읽기 전용**
+              decoration: InputDecoration(border: OutlineInputBorder()),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: Text("닫기"),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
       ),
     );
   }
