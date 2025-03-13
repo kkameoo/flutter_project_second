@@ -51,7 +51,18 @@ class _ContactDetailPage extends State<ContactDetailPage> {
           ),
           IconButton(
             icon: Icon(Icons.note), //
-            onPressed: () => _showMemoDialog(context),
+            onPressed: () async {
+              dynamic memo = await MemoController.getMemo(
+                widget.contact.userId,
+              );
+              if (memo != false) {
+                _showMemoDialog(context);
+              } else {
+                _showNoMemoDialog(context);
+              }
+
+              // => _showMemoDialog(context),
+            },
           ),
         ],
       ),
@@ -136,7 +147,9 @@ class _ContactDetailPage extends State<ContactDetailPage> {
   void _showMemoDialog(BuildContext context) async {
     try {
       //API에서 기존 메모 불러오기
-      String existingMemo = await MemoController.getMemo(widget.contact.userId);
+      String existingMemo = await MemoController.getMemoContent(
+        widget.contact.userId,
+      );
       String existingMemoTitle = await MemoController.getMemoTitle(
         widget.contact.userId,
       );
@@ -176,6 +189,14 @@ class _ContactDetailPage extends State<ContactDetailPage> {
               ),
               actions: [
                 TextButton(
+                  child: Text("삭제"),
+                  onPressed: () async {
+                    _deleteMemo(context);
+                    Navigator.pop(context);
+                  },
+                ),
+
+                TextButton(
                   child: Text("수정"),
                   onPressed: () async {
                     await _updateMemo(context);
@@ -194,6 +215,85 @@ class _ContactDetailPage extends State<ContactDetailPage> {
         context,
       ).showSnackBar(SnackBar(content: Text("메모를 불러오는 중 오류가 발생했습니다.")));
     }
+  }
+
+  // 메모가 없을 경우 나오는 창
+  void _showNoMemoDialog(BuildContext context) {
+    // 모달창 띄우기
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text("메모"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [Text("현재 메모가 존재하지 않습니다.")],
+            ),
+            actions: [
+              TextButton(
+                child: Text("입력 하러 가기"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showMemoInsertDialog(context);
+                },
+              ),
+              TextButton(
+                child: Text("닫기"),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+    );
+  }
+
+  // 메모가 없을 경우 입력창
+  void _showMemoInsertDialog(BuildContext context) {
+    // 모달창 띄우기
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text("메모 입력"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: _memoTitleController,
+                  decoration: InputDecoration(
+                    labelText: "제목",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: _memoContentController,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    labelText: "내용",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                child: Text("입력"),
+                onPressed: () async {
+                  MemoController.addMemo(
+                    _memoTitleController.text,
+                    _memoContentController.text,
+                    widget.contact.userId,
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: Text("닫기"),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+    );
   }
 
   ///  메모 수정 기능
@@ -223,6 +323,30 @@ class _ContactDetailPage extends State<ContactDetailPage> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("메모 수정에 실패했습니다.")));
+    }
+  }
+
+  // 메모삭제
+  void _deleteMemo(BuildContext context) async {
+    try {
+      var dio = Dio();
+      dio.options.headers['Content-Type'] = 'application/json';
+
+      String apiUrl = "http://10.0.2.2:8099/api/memo/${widget.contact.userId}";
+
+      //  서버에서 DELETE 요청 보내기
+      final response = await dio.delete(apiUrl);
+
+      if (response.statusCode == 200) {
+        print("삭제 성공");
+      } else {
+        throw Exception("API 삭제 요청 실패");
+      }
+    } catch (e) {
+      print("연락처 삭제 실패: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("삭제에 실패했습니다. 다시 시도해주세욤")));
     }
   }
 
