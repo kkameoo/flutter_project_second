@@ -141,11 +141,10 @@ class _ContactListPageState extends State<ContactListPage> {
                           },
                         ),
                         onTap: () {
-                          // setState(() {
-                          //   contact.clickCount++; // 클릭 횟수 증가
-                          // });
-
                           _updateCount(contact.userId);
+                          setState(() {
+                            contact.clickCount++; // 클릭 횟수 증가
+                          });
 
                           Navigator.push(
                             context,
@@ -233,6 +232,30 @@ class _ContactListPageState extends State<ContactListPage> {
                                 return ListTile(
                                   title: Text(contact.name),
                                   subtitle: Text(contact.phoneNumber),
+                                  onTap: () {
+                                    _updateCount(contact.userId);
+                                    setState(() {
+                                      contact.clickCount++; // 클릭 횟수 증가
+                                    });
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => ContactDetailPage(
+                                              contact: contact,
+                                              onEdit: () {
+                                                _updateState();
+                                                Navigator.pop(context);
+                                              },
+                                              onDelete: () {
+                                                _updateState();
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                      ),
+                                    );
+                                  },
                                   trailing: IconButton(
                                     icon: Icon(
                                       Icons.star,

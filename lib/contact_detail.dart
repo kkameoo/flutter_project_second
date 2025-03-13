@@ -226,15 +226,31 @@ class _ContactDetailPage extends State<ContactDetailPage> {
     }
   }
 
+  Future<String?> _showGroupDialog(BuildContext context) async {
+    return await showDialog<String>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text("그룹 선택"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildMenuItem(context, "친구"),
+                _buildMenuItem(context, "친척"),
+                _buildMenuItem(context, "가족"),
+                _buildMenuItem(context, "직장"),
+                _buildMenuItem(context, "기타"),
+              ],
+            ),
+          ),
+    );
+  }
+
   Widget _buildMenuItem(BuildContext context, String label) {
     return ListTile(
       title: Text(label),
       onTap: () {
-        setState(() {
-          _selectedGroup = label; // 선택된 값을 업데이트
-        });
-        print("$_selectedGroup 선택됨"); // 선택된 메뉴 출력
-        Navigator.pop(context); // 다이얼로그 닫기
+        Navigator.pop(context, label); // ✅ 선택한 값을 반환 후 다이얼로그 닫기
       },
     );
   }
@@ -249,68 +265,62 @@ class _ContactDetailPage extends State<ContactDetailPage> {
     showDialog(
       context: context,
       builder:
-          (contextEdit) => AlertDialog(
-            title: Text("연락처 수정"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: _editNameController,
-                  decoration: InputDecoration(labelText: "이름"),
-                ),
-                TextField(
-                  controller: _editPhoneController,
-                  decoration: InputDecoration(labelText: "전화번호"),
-                  keyboardType: TextInputType.phone,
-                ),
-                TextField(
-                  controller: _editEmailController,
-                  decoration: InputDecoration(labelText: "이메일"),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                TextField(
-                  controller: _editAdressController,
-                  decoration: InputDecoration(labelText: "주소"),
-                ),
-                TextButton(
-                  child: Text("그룹 선택"),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("그룹 선택"),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              _buildMenuItem(context, "친구"),
-                              _buildMenuItem(context, "친척"),
-                              _buildMenuItem(context, "가족"),
-                              _buildMenuItem(context, "직장"),
-                              _buildMenuItem(context, "기타"),
-                            ],
-                          ),
-                        );
+          (contextEdit) => StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                title: Text("연락처 수정"),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: _editNameController,
+                      decoration: InputDecoration(labelText: "이름"),
+                    ),
+                    TextField(
+                      controller: _editPhoneController,
+                      decoration: InputDecoration(labelText: "전화번호"),
+                      keyboardType: TextInputType.phone,
+                    ),
+                    TextField(
+                      controller: _editEmailController,
+                      decoration: InputDecoration(labelText: "이메일"),
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    TextField(
+                      controller: _editAdressController,
+                      decoration: InputDecoration(labelText: "주소"),
+                    ),
+                    TextButton(
+                      child: Text("그룹 선택"),
+                      onPressed: () async {
+                        String? selectedGroup = await _showGroupDialog(context);
+                        if (selectedGroup != null) {
+                          setState(() {
+                            _selectedGroup =
+                                selectedGroup; // ✅ 다이얼로그 내에서도 setState 반영
+                          });
+                        }
                       },
-                    );
-                  },
+                    ),
+                    Text("선택된 그룹: $_selectedGroup"),
+                  ],
                 ),
-                Text("선택된 그룹: $_selectedGroup"),
-              ],
-            ),
 
-            actions: [
-              TextButton(
-                child: Text("취소"),
-                onPressed: () => Navigator.pop(contextEdit),
-              ),
-              ElevatedButton(
-                child: Text("수정"),
-                onPressed: () async {
-                  await _updateContact(context); // API 호출 후 수정 반영
-                },
-              ),
-            ],
+                actions: [
+                  TextButton(
+                    child: Text("취소"),
+                    onPressed: () => Navigator.pop(contextEdit),
+                  ),
+                  ElevatedButton(
+                    child: Text("수정"),
+                    onPressed: () async {
+                      await _updateContact(context); // API 호출 후 수정 반영
+                      setState(() {});
+                    },
+                  ),
+                ],
+              );
+            },
           ),
     );
   }
