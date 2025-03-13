@@ -24,7 +24,9 @@ class ContactDetailPage extends StatefulWidget {
 
 class _ContactDetailPage extends State<ContactDetailPage> {
   late String _selectedGroup = ""; // 초기 선택값
-  final TextEditingController _memoController = TextEditingController(); //  메모 컨트롤러
+
+  final TextEditingController _memoTitleController = TextEditingController();
+  final TextEditingController _memoContentController = TextEditingController();
 
 
   // 수정 입력 필드를 위한 컨트롤러
@@ -135,13 +137,15 @@ class _ContactDetailPage extends State<ContactDetailPage> {
   }
 
   void _showMemoDialog(BuildContext context) async {
-    // 1️⃣ Spring Boot API에서 기존 메모 불러오기
-    String existingMemo = await MemoController.getMemo(widget.contact.userId);
+    try {
+      //API에서 기존 메모 불러오기
+      String existingMemo = await MemoController.getMemo(widget.contact.userId);
 
-    // 2️⃣ 가져온 데이터를 TextField에 적용
-    _memoController.text = existingMemo.isNotEmpty ? existingMemo : "메모가 없습니다.";
+      // 불러온 메모 적용
+      _memoTitleController.text = "제목 없음";
+      _memoContentController.text = existingMemo.isNotEmpty ? existingMemo : "메모가 없습니다.";
 
-    // 3️⃣ 모달창 띄우기
+      // 모달창 띄우기
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -150,14 +154,24 @@ class _ContactDetailPage extends State<ContactDetailPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextFormField(
-              controller: _memoController,
+              controller: _memoTitleController,
+              decoration: InputDecoration(labelText: "제목", border: OutlineInputBorder()),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              controller: _memoContentController,
               maxLines: 5,
-              readOnly: true, // **읽기 전용**
-              decoration: InputDecoration(border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: "내용", border: OutlineInputBorder()),
             ),
           ],
         ),
         actions: [
+          TextButton(
+            child: Text("수정"),
+            onPressed: () async {
+              await _updateMemo(context);
+            },
+          ),
           TextButton(
             child: Text("닫기"),
             onPressed: () => Navigator.pop(context),
@@ -165,7 +179,43 @@ class _ContactDetailPage extends State<ContactDetailPage> {
         ],
       ),
     );
+  } catch (e) {
+      print("메모 불러오기 오류: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("메모를 불러오는 중 오류가 발생했습니다.")),
+      );
+    }
   }
+
+  ///  메모 수정 기능
+  Future<void> _updateMemo(BuildContext context) async {
+    try {
+      var dio = Dio();
+      dio.options.headers['Content-Type'] = 'application/json';
+
+      String apiUrl = "http://10.0.2.2:8099/api/memo/${widget.contact.userId}";
+
+      Map<String, dynamic> updatedMemo = {
+        "userId": widget.contact.userId,
+        "title": _memoTitleController.text,
+        "content": _memoContentController.text,
+      };
+
+      final response = await dio.put(apiUrl, data: updatedMemo);
+
+      if (response.statusCode == 200) {
+        Navigator.pop(context);
+      } else {
+        throw Exception("메모 수정 실패");
+      }
+    } catch (e) {
+      print("메모 수정 오류: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("메모 수정에 실패했습니다.")),
+      );
+    }
+  }
+
 
   Widget _buildMenuItem(BuildContext context, String label) {
     return ListTile(
