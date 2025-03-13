@@ -35,11 +35,15 @@ class _ContactListPageState extends State<ContactListPage> {
   void _filterContacts() {
     final query = _searchController.text.toLowerCase();
     setState(() {
-      _filteredContacts = _allContacts.where((contact) {
-        final matchesQuery = contact.name.toLowerCase().contains(query) || contact.phoneNumber.contains(query);
-        final matchesGroup = _selectedGroup == "전체" || contact.group == _selectedGroup;
-        return matchesQuery && matchesGroup;
-      }).toList();
+      _filteredContacts =
+          _allContacts.where((contact) {
+            final matchesQuery =
+                contact.name.toLowerCase().contains(query) ||
+                contact.phoneNumber.contains(query);
+            final matchesGroup =
+                _selectedGroup == "전체" || contact.group == _selectedGroup;
+            return matchesQuery && matchesGroup;
+          }).toList();
     });
   }
 
@@ -63,14 +67,18 @@ class _ContactListPageState extends State<ContactListPage> {
         } else {
           _allContacts = snapshot.data!;
           _filteredContacts =
-          _searchController.text.isEmpty && _selectedGroup == "전체"
-              ? _allContacts
-              : _allContacts.where((contact) {
-            final query = _searchController.text.toLowerCase();
-            final matchesQuery = contact.name.toLowerCase().contains(query) || contact.phoneNumber.contains(query);
-            final matchesGroup = _selectedGroup == "전체" || contact.group == _selectedGroup;
-            return matchesQuery && matchesGroup;
-          }).toList();
+              _searchController.text.isEmpty && _selectedGroup == "전체"
+                  ? _allContacts
+                  : _allContacts.where((contact) {
+                    final query = _searchController.text.toLowerCase();
+                    final matchesQuery =
+                        contact.name.toLowerCase().contains(query) ||
+                        contact.phoneNumber.contains(query);
+                    final matchesGroup =
+                        _selectedGroup == "전체" ||
+                        contact.group == _selectedGroup;
+                    return matchesQuery && matchesGroup;
+                  }).toList();
 
           return Scaffold(
             appBar: AppBar(
@@ -121,7 +129,10 @@ class _ContactListPageState extends State<ContactListPage> {
                         trailing: IconButton(
                           icon: Icon(
                             contact.isFavorite ? Icons.star : Icons.star_border,
-                            color: contact.isFavorite ? Colors.orange : Colors.grey,
+                            color:
+                                contact.isFavorite
+                                    ? Colors.orange
+                                    : Colors.grey,
                           ),
                           onPressed: () {
                             setState(() {
@@ -130,24 +141,27 @@ class _ContactListPageState extends State<ContactListPage> {
                           },
                         ),
                         onTap: () {
-                          setState(() {
-                            contact.clickCount++; // 클릭 횟수 증가
-                          });
+                          // setState(() {
+                          //   contact.clickCount++; // 클릭 횟수 증가
+                          // });
+
+                          _updateCount(contact.userId);
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder:
                                   (context) => ContactDetailPage(
-                                contact: contact,
-                                onEdit: () {
-                                  _updateState();
-                                  Navigator.pop(context);
-                                },
-                                onDelete: () {
-                                  _updateState();
-                                  Navigator.pop(context);
-                                },
-                              ),
+                                    contact: contact,
+                                    onEdit: () {
+                                      _updateState();
+                                      Navigator.pop(context);
+                                    },
+                                    onDelete: () {
+                                      _updateState();
+                                      Navigator.pop(context);
+                                    },
+                                  ),
                             ),
                           );
                         },
@@ -164,10 +178,10 @@ class _ContactListPageState extends State<ContactListPage> {
                   MaterialPageRoute(
                     builder:
                         (context) => AddNumberForm(
-                      onadd: () {
-                        _updateState();
-                      },
-                    ),
+                          onadd: () {
+                            _updateState();
+                          },
+                        ),
                   ),
                 );
               },
@@ -181,8 +195,13 @@ class _ContactListPageState extends State<ContactListPage> {
   }
 
   void showFavoriteContactsModal(BuildContext context) {
+    for (int i = 0; i < _allContacts.length; i++) {
+      print(_allContacts[i].toJson());
+    }
+
     // 즐겨찾기 상태를 변경한 후, 전체 연락처 목록을 업데이트하기 위해 setState를 호출
-    final favoriteContacts = _allContacts.where((contact) => contact.isFavorite).toList();
+    final favoriteContacts =
+        _allContacts.where((contact) => contact.isFavorite).toList();
 
     // 클릭 횟수를 기준으로 내림차순 정렬 (자주 클릭한 순서대로)
     favoriteContacts.sort((a, b) => b.clickCount.compareTo(a.clickCount));
@@ -204,29 +223,33 @@ class _ContactListPageState extends State<ContactListPage> {
                   ),
                   SizedBox(height: 10),
                   Expanded(
-                    child: favoriteContacts.isEmpty
-                        ? Center(child: Text("즐겨찾는 연락처가 없습니다."))
-                        : ListView.builder(
-                      itemCount: favoriteContacts.length,
-                      itemBuilder: (context, index) {
-                        final contact = favoriteContacts[index];
-                        return ListTile(
-                          title: Text(contact.name),
-                          subtitle: Text(contact.phoneNumber),
-                          trailing: IconButton(
-                            icon: Icon(Icons.star, color: Colors.orange),
-                            onPressed: () {
-                              setState(() {
-                                contact.isFavorite = false;
-                              });
-                              // 상태 변경 후, 전체 목록을 갱신하기 위해 setState 호출
-                              Navigator.pop(context);
-                              setState(() {});
-                            },
-                          ),
-                        );
-                      },
-                    ),
+                    child:
+                        favoriteContacts.isEmpty
+                            ? Center(child: Text("즐겨찾는 연락처가 없습니다."))
+                            : ListView.builder(
+                              itemCount: favoriteContacts.length,
+                              itemBuilder: (context, index) {
+                                final contact = favoriteContacts[index];
+                                return ListTile(
+                                  title: Text(contact.name),
+                                  subtitle: Text(contact.phoneNumber),
+                                  trailing: IconButton(
+                                    icon: Icon(
+                                      Icons.star,
+                                      color: Colors.orange,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        contact.isFavorite = false;
+                                      });
+                                      // 상태 변경 후, 전체 목록을 갱신하기 위해 setState 호출
+                                      Navigator.pop(context);
+                                      setState(() {});
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
                   ),
                 ],
               ),
@@ -257,6 +280,28 @@ class _ContactListPageState extends State<ContactListPage> {
     } catch (e) {
       print("연락처 데이터를 불러오는데 실패했습니다: $e");
       return [];
+    }
+  }
+
+  Future<void> _updateCount(int userId) async {
+    try {
+      var dio = Dio();
+      dio.options.headers['Content-Type'] = 'application/json';
+
+      String apiUrl = "http://10.0.2.2:8099/api/user/count/${userId}";
+
+      // 서버에 PUT 요청 보내기
+      final response = await dio.put(apiUrl);
+
+      if (response.statusCode == 200) {
+        // 서버 응답이 정상이면 ui업데이트
+
+        print("ok");
+      } else {
+        throw Exception("API 수정 요청 실패");
+      }
+    } catch (e) {
+      print("연락처 수정 실패욤: $e");
     }
   }
 

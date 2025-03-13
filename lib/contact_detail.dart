@@ -5,8 +5,6 @@ import 'package:flutter_project_second/memo_controller.dart';
 import 'list.dart';
 
 class ContactDetailPage extends StatefulWidget {
-
-
   final ContactVo contact; // 현재 선택된 연락처 정보
   final Function() onEdit; // 수정된 데이터를 리스트에 반영
   final Function() onDelete;
@@ -27,7 +25,6 @@ class _ContactDetailPage extends State<ContactDetailPage> {
 
   final TextEditingController _memoTitleController = TextEditingController();
   final TextEditingController _memoContentController = TextEditingController();
-
 
   // 수정 입력 필드를 위한 컨트롤러
   final TextEditingController _editNameController = TextEditingController();
@@ -140,50 +137,62 @@ class _ContactDetailPage extends State<ContactDetailPage> {
     try {
       //API에서 기존 메모 불러오기
       String existingMemo = await MemoController.getMemo(widget.contact.userId);
+      String existingMemoTitle = await MemoController.getMemoTitle(
+        widget.contact.userId,
+      );
 
       // 불러온 메모 적용
-      _memoTitleController.text = "제목 없음";
-      _memoContentController.text = existingMemo.isNotEmpty ? existingMemo : "메모가 없습니다.";
+      _memoTitleController.text =
+          existingMemoTitle.isNotEmpty ? existingMemoTitle : "메모가 없습니다";
+      _memoContentController.text =
+          existingMemo.isNotEmpty ? existingMemo : "메모가 없습니다.";
 
       // 모달창 띄우기
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("메모"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _memoTitleController,
-              decoration: InputDecoration(labelText: "제목", border: OutlineInputBorder()),
+      showDialog(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: Text("메모"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: _memoTitleController,
+                    decoration: InputDecoration(
+                      labelText: "제목",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: _memoContentController,
+                    maxLines: 5,
+                    decoration: InputDecoration(
+                      labelText: "내용",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  child: Text("수정"),
+                  onPressed: () async {
+                    await _updateMemo(context);
+                  },
+                ),
+                TextButton(
+                  child: Text("닫기"),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
             ),
-            SizedBox(height: 10),
-            TextFormField(
-              controller: _memoContentController,
-              maxLines: 5,
-              decoration: InputDecoration(labelText: "내용", border: OutlineInputBorder()),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            child: Text("수정"),
-            onPressed: () async {
-              await _updateMemo(context);
-            },
-          ),
-          TextButton(
-            child: Text("닫기"),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
-      ),
-    );
-  } catch (e) {
-      print("메모 불러오기 오류: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("메모를 불러오는 중 오류가 발생했습니다.")),
       );
+    } catch (e) {
+      print("메모 불러오기 오류: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("메모를 불러오는 중 오류가 발생했습니다.")));
     }
   }
 
@@ -204,18 +213,18 @@ class _ContactDetailPage extends State<ContactDetailPage> {
       final response = await dio.put(apiUrl, data: updatedMemo);
 
       if (response.statusCode == 200) {
+        print("메모 수정 성공");
         Navigator.pop(context);
       } else {
         throw Exception("메모 수정 실패");
       }
     } catch (e) {
       print("메모 수정 오류: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("메모 수정에 실패했습니다.")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("메모 수정에 실패했습니다.")));
     }
   }
-
 
   Widget _buildMenuItem(BuildContext context, String label) {
     return ListTile(

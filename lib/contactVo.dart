@@ -29,7 +29,7 @@ class ContactVo {
       address: apiData['address'],
       group: apiData['group'],
       isFavorite: apiData['isFavorite'] ?? false, // 추가
-      clickCount: apiData['clickCount'] ?? 0,
+      clickCount: apiData['count'] ?? 0,
     );
   }
 
@@ -43,7 +43,7 @@ class ContactVo {
       'address': address,
       'group': group,
       'isFavorite': isFavorite, // 추가
-      'clickCount': clickCount,
+      'count': clickCount,
     };
   }
 }
