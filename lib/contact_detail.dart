@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'list.dart';
 
 class ContactDetailPage extends StatefulWidget {
-  // ✅ StatefulWidget으로 변경
+  // ✅ StatefulWidget으로 변경flu
 
   final ContactVo contact; // 현재 선택된 연락처 정보
   final Function() onEdit; // 수정된 데이터를 리스트에 반영
